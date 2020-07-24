@@ -2,26 +2,18 @@ from datetime import datetime
 from django import forms
 from .classe_viagem import tipos_de_classes
 from .validations import *
+from .models import passagem
 
 
-class PassagemForm(forms.Form):
-    ''' Formulario com todos os campos necessarios para o usuario especificar uma passagem '''
-
-    origem = forms.CharField(label='Origem',max_length=100)
-    destino = forms.CharField(label='Destino', max_length=100)
-    data_ida = forms.DateField(label='Data da ida',
-        widget=forms.DateInput(format='%d/%m/%Y'), input_formats=['%d/%m/%Y'])
-    data_volta = forms.DateField(label='Data da volda',
-        widget=forms.DateInput(format='%d/%m/%Y'), input_formats=['%d/%m/%Y'])
+class PassagemForm(forms.ModelForm):
     data_pesquisa = forms.DateField(label='Data da pesquisa', disabled=True, initial=datetime.today)
-    classe_viagem = forms.ChoiceField(label='Tipo de classe', choices=tipos_de_classes)
-    informacoes = forms.CharField(
-        label='Informações extras',
-        widget=forms.Textarea,
-        required=False,
-        max_length=250
-    )
-    email = forms.EmailField(label='Email',max_length=50)
+
+    class Meta:
+        model = passagem.Passagem
+        fields = '__all__'
+        labels = {'data_ida':'Data de ida', 'data_volta':'Data de volta', 'informacoes':'Inforamações',
+                  'classe_viagem':'Classe de vôo'}
+
 
     def clean(self):
         ''' Verifica se há erros nos formatos suportados por cada campo e caso exista mostra o tipo de erro. '''
